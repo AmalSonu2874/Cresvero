@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cresvero | Future Systems</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sage: '#b9c095',
+                        periwinkle: '#748db9',
+                        dark: '#0a0a0a',
+                        light: '#e6e6e6'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-dark text-[#e0e0e0] overflow-x-hidden">
+
+    <!-- NOISE OVERLAY -->
+    <div class="fixed inset-0 bg-noise opacity-[0.03] pointer-events-none z-50 mix-blend-overlay"></div>
+
+    <!-- PRELOADER -->
+    <div id="preloader" class="fixed inset-0 z-[100] bg-dark flex flex-col items-center justify-center gap-6">
+        <!-- Brand Name Static -->
+        <h1 class="text-5xl md:text-7xl font-serif italic text-[#e0e0e0] tracking-tighter">
+            Cresvero<span class="text-sage">.</span>
+        </h1>
+
+        <!-- Loading Bar Container (Blue Border) -->
+        <div class="w-48 h-[3px] border border-[#748db9] rounded-full overflow-hidden p-[1px]">
+            <!-- Loading Fill (Sage Color) -->
+            <div class="h-full bg-[#b9c095] animate-[fillBar_0.5s_ease-out_forwards]"></div>
+        </div>
+    </div>
+
+    <!-- TERMINAL MODAL -->
+    <div id="terminal-modal"
+        class="fixed inset-0 z-[90] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="w-full max-w-2xl bg-dark border border-sage rounded-lg overflow-hidden shadow-2xl shadow-sage/20 flex flex-col h-[70vh] md:h-[60vh] transform scale-95 transition-transform duration-300"
+            id="terminal-content">
+            <div class="bg-zinc-900 p-2 flex justify-between items-center border-b border-zinc-800">
+                <div class="flex gap-2 px-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div class="font-mono text-xs text-zinc-500">cresvero_terminal</div>
+                <button id="close-terminal" class="text-zinc-500 hover:text-white"><i data-lucide="x"
+                        class="w-4 h-4"></i></button>
+            </div>
+            <div id="terminal-output" class="p-4 font-mono text-sm text-sage overflow-y-auto flex-1 space-y-1">
+                <div class="opacity-90">WELCOME TO CRESVERO OS v2.1.0</div>
+                <div class="opacity-90">Type "help" for commands.</div>
+            </div>
+            <div class="p-4 bg-black border-t border-zinc-800 flex gap-2 items-center">
+                <span class="text-sage">&gt;</span>
+                <input type="text" id="terminal-input"
+                    class="bg-transparent border-none outline-none text-white font-mono w-full"
+                    placeholder="Type command..." autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav
+        class="fixed w-full z-40 top-0 px-6 py-4 flex justify-between items-center backdrop-blur-sm bg-dark/80 border-b border-transparent transition-all duration-300">
+        <a href="#" class="text-2xl font-serif italic tracking-tighter z-50 mix-blend-difference text-white">
+            Cresvero<span class="text-sage">.</span>
+        </a>
+
+        <!-- Desktop Menu - Updated to Small Font Size -->
+        <div
+            class="hidden md:flex items-center gap-12 bg-white/5 px-8 py-2 rounded-full backdrop-blur-md border border-white/10">
+            <!-- 
+                 UPDATED: text-[10px] for that sharp, technical look. 
+                 Added tracking-[0.2em] for readability and aesthetic.
+            -->
+            <a href="#projects"
+                class="font-mono text-[10px] hover:text-sage transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">Projects</a>
+            <a href="#about"
+                class="font-mono text-[10px] hover:text-periwinkle transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">About</a>
+            <a href="#contact"
+                class="font-mono text-[10px] hover:text-white transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">Contact</a>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="flex items-center gap-4 z-50">
+            <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full border border-sage/30 bg-sage/10">
+                <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+                <span class="text-[10px] font-mono tracking-wide text-sage whitespace-nowrap">OPEN FOR WORK</span>
+            </div>
+
+            <button id="open-terminal-btn" class="p-2 hover:bg-white/10 rounded-full transition-colors hidden md:block"
+                title="Open Terminal (~)">
+                <i data-lucide="terminal" class="w-4 h-4"></i>
+            </button>
+
+            <button id="theme-toggle" class="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+            </button>
+
+            <button id="menu-toggle" class="md:hidden p-2 text-white mix-blend-difference">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div id="mobile-menu" class="fixed inset-0 bg-dark z-30 flex flex-col justify-between p-8 closed">
+        <div
+            class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-multiply pointer-events-none">
+        </div>
+        <div class="h-16"></div>
+        <div class="flex flex-col items-center gap-10 z-10">
+            <div class="flex flex-col items-center group mobile-link" data-target="#projects">
+                <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">01 //
+                    NAVIGATE</span>
+                <a href="#projects"
+                    class="text-5xl font-serif italic text-light hover:text-sage transition-colors relative">
+                    Projects
+                    <span
+                        class="absolute -bottom-2 left-0 w-0 h-[1px] bg-sage transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
+            <div class="flex flex-col items-center group mobile-link" data-target="#about">
+                <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">02 //
+                    NAVIGATE</span>
+                <a href="#about"
+                    class="text-5xl font-serif italic text-light hover:text-sage transition-colors relative">
+                    About
+                    <span
+                        class="absolute -bottom-2 left-0 w-0 h-[1px] bg-sage transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
+            <div class="flex flex-col items-center group mobile-link" data-target="#contact">
+                <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">03 //
+                    NAVIGATE</span>
+                <a href="#contact"
+                    class="text-5xl font-serif italic text-light hover:text-sage transition-colors relative">
+                    Contact
+                    <span
+                        class="absolute -bottom-2 left-0 w-0 h-[1px] bg-sage transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 z-10 mt-12">
+            <button id="mobile-terminal-btn"
+                class="w-full max-w-xs border border-zinc-700 bg-zinc-900/50 p-4 flex items-center justify-between text-sage font-mono text-sm hover:border-sage transition-colors group">
+                <span class="flex items-center gap-2">
+                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                    SYSTEM TERMINAL
+                </span>
+                <span class="group-hover:translate-x-1 transition-transform">&gt;_</span>
+            </button>
+            <div class="text-center font-mono text-[10px] text-zinc-600">
+                <p>CRESVERO SYSTEMS</p>
+                <p>MOBILE INTERFACE v2.1.0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <header class="relative min-h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden pt-20">
+        <div
+            class="absolute top-1/4 right-[-10%] w-[60vw] h-[60vw] bg-periwinkle rounded-full blur-[150px] opacity-10 animate-pulse-slow pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-[-10%] w-[50vw] h-[50vw] bg-sage rounded-full blur-[120px] opacity-10 pointer-events-none">
+        </div>
+
+        <div class="z-10 max-w-6xl w-full mx-auto">
+            <div class="reveal-element flex items-center gap-4 mb-6" style="transition-delay: 0ms;">
+                <div class="h-[1px] w-12 bg-sage"></div>
+                <p class="font-mono text-sage tracking-widest text-xs uppercase">
+                    Est. 2025 — Future Systems
+                </p>
+            </div>
+
+            <div class="reveal-element" style="transition-delay: 200ms;">
+                <h1 class="text-5xl md:text-8xl lg:text-9xl font-serif leading-[0.9] mb-12 mix-blend-difference">
+                    Growing Business <br />
+                    <span class="italic text-periwinkle ml-4 md:ml-24 block mt-2">Through Tech</span>
+                </h1>
+            </div>
+
+            <div class="reveal-element flex flex-col md:flex-row items-start justify-between gap-12 border-t border-zinc-500/20 pt-12"
+                style="transition-delay: 400ms;">
+                <p class="max-w-xl font-mono text-sm md:text-base opacity-70 leading-relaxed text-justify">
+                    We are Cresvero. We don't just write code; we architect digital ecosystems.
+                    Using retro-futuristic principles, we merge the raw utility of brutalism
+                    with the elegance of modern motion to build the identity you haven't imagined yet.
+                </p>
+
+                <div class="flex flex-col gap-4 w-full md:w-auto">
+                    <a href="#projects"
+                        class="group flex justify-between items-center gap-8 px-8 py-4 bg-[#e0e0e0] text-black hover:bg-sage transition-all duration-500 w-full md:w-64">
+                        <span class="font-mono uppercase text-xs tracking-widest font-bold">Explore Projects</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <p class="text-[10px] font-mono text-center opacity-40">AVAILABLE FOR NEW CLIENTS</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
+            <i data-lucide="chevron-down" class="w-6 h-6"></i>
+        </div>
+    </header>
+
+    <!-- PROJECTS SECTION -->
+    <section id="projects" class="min-h-screen relative flex flex-col lg:flex-row border-t border-zinc-500/20">
+        <div id="canvas-container"
+            class="w-full lg:w-1/2 h-[50vh] lg:h-auto bg-gradient-to-br from-periwinkle/5 to-transparent relative overflow-hidden group">
+            <div
+                class="absolute top-6 left-6 z-10 font-mono text-[10px] text-periwinkle border border-periwinkle/30 px-2 py-1 pointer-events-none">
+                FIG 1.0 — THE CORE ENGINE<br />
+                STATUS: <span id="engine-status">IDLE</span>
+            </div>
+        </div>
+
+        <div class="w-full lg:w-1/2 p-8 md:p-20 flex flex-col justify-center bg-zinc-50/5 backdrop-blur-sm">
+            <div class="reveal-element">
+                <h2 class="text-4xl md:text-6xl font-serif mb-2">Our <span class="text-sage italic">Capabilities</span>
+                </h2>
+                <p class="font-mono text-xs text-zinc-500 mb-12">SELECT A SERVICE VECTOR</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="reveal-element group border border-zinc-500/20 p-6 hover:border-sage hover:bg-zinc-900/50 transition-all duration-300 cursor-pointer"
+                    style="transition-delay: 150ms;">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="globe"
+                            class="text-periwinkle group-hover:text-sage transition-colors w-6 h-6"></i>
+                        <span
+                            class="font-mono text-[10px] opacity-30 group-hover:opacity-100 transition-opacity">PROJ_01</span>
+                    </div>
+                    <h3 class="text-xl font-serif mb-2">Web Architecture</h3>
+                    <p class="text-sm opacity-60 mb-4 leading-relaxed">High-performance applications tailored for scale
+                        and conversion.</p>
+                    <div class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage">
+                        REACT // NEXT.JS // TAILWIND
+                    </div>
+                </div>
+
+                <div class="reveal-element group border border-zinc-500/20 p-6 hover:border-sage hover:bg-zinc-900/50 transition-all duration-300 cursor-pointer"
+                    style="transition-delay: 300ms;">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="cpu"
+                            class="text-periwinkle group-hover:text-sage transition-colors w-6 h-6"></i>
+                        <span
+                            class="font-mono text-[10px] opacity-30 group-hover:opacity-100 transition-opacity">PROJ_02</span>
+                    </div>
+                    <h3 class="text-xl font-serif mb-2">System Design</h3>
+                    <p class="text-sm opacity-60 mb-4 leading-relaxed">Backend infrastructure that handles logic with
+                        military precision.</p>
+                    <div class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage">
+                        NODE // PYTHON // AWS
+                    </div>
+                </div>
+
+                <div class="reveal-element group border border-zinc-500/20 p-6 hover:border-sage hover:bg-zinc-900/50 transition-all duration-300 cursor-pointer"
+                    style="transition-delay: 450ms;">
+                    <div class="flex items-start justify-between mb-4">
+                        <i data-lucide="layers"
+                            class="text-periwinkle group-hover:text-sage transition-colors w-6 h-6"></i>
+                        <span
+                            class="font-mono text-[10px] opacity-30 group-hover:opacity-100 transition-opacity">PROJ_03</span>
+                    </div>
+                    <h3 class="text-xl font-serif mb-2">Identity & Brand</h3>
+                    <p class="text-sm opacity-60 mb-4 leading-relaxed">Digital branding that cuts through the noise of
+                        the modern web.</p>
+                    <div class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage">
+                        DESIGN // MOTION // UI/UX
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="py-32 px-6 md:px-20 bg-sage text-dark border-y border-zinc-900 relative overflow-hidden">
+        <div
+            class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-multiply">
+        </div>
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
+            <div class="reveal-element">
+                <h2 class="text-5xl md:text-7xl font-serif leading-none">
+                    Digital <br />
+                    <span class="text-white drop-shadow-lg italic">Craftsmanship</span>
+                </h2>
+            </div>
+            <div class="flex flex-col justify-end">
+                <div class="reveal-element" style="transition-delay: 200ms;">
+                    <p class="font-mono text-lg font-bold mb-8">
+                        We are a new entity with an old soul.
+                    </p>
+                    <p class="font-serif text-2xl leading-relaxed opacity-80">
+                        "In a world of templates, we chose to hand-forge every pixel.
+                        We don't have a 10-year history. We have a 100-year vision."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-24 px-6 md:px-20 relative min-h-screen flex flex-col justify-center">
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20">
+            <div class="flex flex-col justify-between">
+                <div>
+                    <div class="reveal-element">
+                        <div class="flex items-center gap-2 mb-6 text-periwinkle">
+                             <div class="w-2 h-2 bg-periwinkle animate-pulse rounded-full"></div>
+                             <span class="font-mono text-xs tracking-widest">SECURE CHANNEL OPEN</span>
+                        </div>
+                        <h2 class="text-5xl md:text-7xl font-serif mb-8">
+                            Establish <br/> 
+                            <span class="italic text-sage">Connection</span>
+                        </h2>
+                        <p class="font-mono text-sm opacity-60 max-w-md leading-relaxed mb-12">
+                            Ready to upgrade your reality? Our frequency is open.
+                            Whether for a full system overhaul or a single module integration.
+                        </p>
+                    </div>
+                </div>
+                <div class="reveal-element" style="transition-delay: 200ms;">
+                    <div class="space-y-6">
+                        <div class="flex flex-col">
+                            <span class="font-mono text-xs opacity-40 mb-1">HQ COORDINATES</span>
+                            <span class="text-xl font-serif">San Francisco, CA (Virtual)</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-mono text-xs opacity-40 mb-1">DIRECT LINE</span>
+                            <a href="mailto:cresvero.tech@gmail.com" class="text-xl font-serif hover:text-sage transition-colors">cresvero.tech@gmail.com</a>
+                        </div>
+                        <div class="flex gap-4 mt-8">
+                            <a href="#" class="border border-zinc-500 px-4 py-2 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">Instagram</a>
+                            <a href="#" class="border border-zinc-500 px-4 py-2 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">Twitter</a>
+                            <a href="#" class="border border-zinc-500 px-4 py-2 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900/50 p-8 md:p-12 border border-zinc-800 backdrop-blur-md relative overflow-hidden reveal-element" style="transition-delay: 300ms;">
+                <div class="absolute top-0 right-0 p-4 opacity-20 text-white">
+                    <i data-lucide="cpu" class="w-32 h-32" stroke-width="0.5"></i>
+                </div>
+                <h3 class="font-mono text-xs text-sage mb-8 border-b border-sage/20 pb-4">
+                    // INPUT_TRANSMISSION_DATA
+                </h3>
+                <form id="contact-form" class="space-y-8 font-mono">
+                    <div class="group relative">
+                        <!-- Added 'name' attributes for easier data handling -->
+                        <input required type="text" name="name" class="w-full bg-transparent border-b border-zinc-500 py-3 focus:border-sage outline-none transition-colors peer text-lg text-white">
+                        <label class="absolute left-0 top-3 text-zinc-500 transition-all duration-300 -translate-y-8 text-xs peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-focus:-translate-y-8 peer-focus:text-xs peer-focus:text-sage">
+                            [NAME]
+                        </label>
+                    </div>
+                    <div class="group relative">
+                        <input required type="email" name="email" class="w-full bg-transparent border-b border-zinc-500 py-3 focus:border-sage outline-none transition-colors peer text-lg text-white">
+                        <label class="absolute left-0 top-3 text-zinc-500 transition-all duration-300 -translate-y-8 text-xs peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-focus:-translate-y-8 peer-focus:text-xs peer-focus:text-sage">
+                            [EMAIL]
+                        </label>
+                    </div>
+                    <div class="group relative">
+                        <textarea required rows="4" name="message" class="w-full bg-transparent border-b border-zinc-500 py-3 focus:border-sage outline-none transition-colors peer text-lg resize-none text-white"></textarea>
+                        <label class="absolute left-0 top-3 text-zinc-500 transition-all duration-300 -translate-y-8 text-xs peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-focus:-translate-y-8 peer-focus:text-xs peer-focus:text-sage">
+                            [MESSAGE]
+                        </label>
+                    </div>
+                    <button type="submit" id="submit-btn" class="flex items-center gap-4 px-8 py-4 border rounded-none transition-all duration-500 w-full md:w-auto justify-center border-zinc-500 hover:border-sage hover:text-sage text-zinc-400">
+                        <span id="btn-text">SEND TRANSMISSION</span>
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="absolute bottom-6 left-6 right-6 flex justify-between items-end border-t border-zinc-800 pt-6">
+            <span class="font-serif italic text-2xl text-periwinkle">Cresvero.</span>
+            <span class="font-mono text-[10px] opacity-30 text-white">SYSTEM v2.1.0 // ALL RIGHTS RESERVED 2024</span>
+        </div>
+    </section>
+
+    <!-- LOGIC -->
+    <script src="script.js"></script>
+</body>
+
+</html>
