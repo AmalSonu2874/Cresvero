@@ -35,9 +35,9 @@ body {
 /* Animation Utilities */
 .reveal-element {
     opacity: 0;
-    transform: translateY(3rem);
+    transform: translateY(2rem);
     filter: blur(4px);
-    transition: all 1s ease-out;
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-element.active {
@@ -48,7 +48,7 @@ body {
 
 /* Mobile Menu */
 #mobile-menu {
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
 
 #mobile-menu.open {
@@ -65,7 +65,7 @@ body {
 
 /* Preloader Styles */
 #preloader {
-    transition: opacity 0.5s ease-out, visibility 0.5s;
+    transition: opacity 0.6s ease-out, visibility 0.6s;
 }
 
 #preloader.fade-out {
@@ -82,4 +82,45 @@ body {
     100% {
         width: 100%;
     }
+}
+
+/* Magnetic Hover Effect */
+.hover-card {
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Toast Notification */
+#toast {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#toast.show {
+    transform: translate(-50%, 0);
+    opacity: 1;
+}
+
+#toast.hide {
+    transform: translate(-50%, 20px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Matrix Canvas */
+#matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 80;
+    /* Below terminal modal (90), above everything else */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+#matrix-canvas.active {
+    opacity: 0.3;
 }
