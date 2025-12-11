@@ -48,21 +48,47 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="bg-dark text-[#e0e0e0] overflow-x-hidden">
+<body class="bg-dark text-[#e0e0e0]">
 
     <!-- NOISE OVERLAY -->
     <div class="fixed inset-0 bg-noise opacity-[0.03] pointer-events-none z-50 mix-blend-overlay"></div>
 
+    <!-- MATRIX CANVAS (Hidden by default) -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast"
+        class="fixed bottom-12 left-1/2 z-[100] hide flex items-center gap-3 bg-zinc-900 border border-sage px-6 py-3 rounded-full shadow-2xl shadow-sage/10">
+        <i data-lucide="check-circle-2" class="text-sage w-4 h-4"></i>
+        <span id="toast-message" class="text-xs font-mono text-white tracking-wider">SYSTEM NOTIFICATION</span>
+    </div>
+
+    <!-- SCROLL TO TOP BUTTON -->
+    <button id="scroll-top-btn"
+        class="fixed bottom-8 right-8 z-40 bg-zinc-900 border border-zinc-700 text-sage p-3 rounded-full opacity-0 translate-y-10 transition-all duration-500 hover:border-sage shadow-lg hover:shadow-sage/20 pointer-events-none"
+        aria-label="Scroll to top">
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <!-- SYSTEM STATUS BAR (Mobile/Desktop Footer) -->
+    <div
+        class="fixed bottom-0 left-0 w-full z-30 bg-dark/90 backdrop-blur-sm border-t border-zinc-900 py-1 px-4 flex justify-between items-center text-[9px] font-mono text-zinc-500 select-none">
+        <div class="flex items-center gap-4">
+            <span class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-sage rounded-full animate-pulse"></span>
+                SYSTEM ONLINE
+            </span>
+            <span id="system-time" class="hidden md:inline">00:00:00 UTC</span>
+        </div>
+        <div>v2.2.0-STABLE</div>
+    </div>
+
     <!-- PRELOADER -->
     <div id="preloader" class="fixed inset-0 z-[100] bg-dark flex flex-col items-center justify-center gap-6">
-        <!-- Brand Name Static -->
         <h1 class="text-5xl md:text-7xl font-serif italic text-[#e0e0e0] tracking-tighter">
             Cresvero<span class="text-sage">.</span>
         </h1>
-
-        <!-- Loading Bar Container (Blue Border) -->
         <div class="w-48 h-[3px] border border-[#748db9] rounded-full overflow-hidden p-[1px]">
-            <!-- Loading Fill (Sage Color) -->
             <div class="h-full bg-[#b9c095] animate-[fillBar_0.5s_ease-out_forwards]"></div>
         </div>
     </div>
@@ -79,12 +105,12 @@
                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
                 <div class="font-mono text-xs text-zinc-500">cresvero_terminal</div>
-                <button id="close-terminal" class="text-zinc-500 hover:text-white"><i data-lucide="x"
-                        class="w-4 h-4"></i></button>
+                <button id="close-terminal" class="text-zinc-500 hover:text-white" aria-label="Close Terminal"><i
+                        data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             <div id="terminal-output" class="p-4 font-mono text-sm text-sage overflow-y-auto flex-1 space-y-1">
-                <div class="opacity-90">WELCOME TO CRESVERO OS v2.1.0</div>
-                <div class="opacity-90">Type "help" for commands.</div>
+                <div class="opacity-90">WELCOME TO CRESVERO OS v2.2.0</div>
+                <div class="opacity-90">System online. Type "help" for command list.</div>
             </div>
             <div class="p-4 bg-black border-t border-zinc-800 flex gap-2 items-center">
                 <span class="text-sage">&gt;</span>
@@ -96,56 +122,62 @@
     </div>
 
     <!-- NAVIGATION -->
-     
     <nav
         class="fixed w-full z-40 top-0 px-6 py-4 flex justify-between items-center backdrop-blur-sm bg-dark/80 border-b border-transparent transition-all duration-300">
-        <a href="#" class="text-2xl font-serif italic tracking-tighter z-50 mix-blend-difference text-white">
-            Cresvero<span class="text-sage">.</span>
+        <a href="#" class="flex items-center gap-3 z-50 mix-blend-difference text-white group">
+            <svg width="32" height="32" viewBox="0 0 100 100" fill="none"
+                class="transition-transform duration-700 ease-out group-hover:rotate-180">
+                <path d="M75 25 L50 10 L25 25 L25 75 L50 90 L75 75" stroke="#b9c095" stroke-width="4"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M75 25 L50 40 L25 25" stroke="#748db9" stroke-width="3" class="opacity-70" />
+                <path d="M25 75 L50 60 L75 75" stroke="#748db9" stroke-width="3" class="opacity-70" />
+                <path d="M25 25 L25 75" stroke="#748db9" stroke-width="3" class="opacity-50" />
+                <circle cx="50" cy="50" r="8" fill="#b9c095" class="animate-pulse" />
+            </svg>
+            <span class="text-2xl font-serif italic tracking-tighter">
+                Cresvero<span class="text-sage">.</span>
+            </span>
         </a>
-
-        <!-- Desktop Menu - Updated to Small Font Size -->
 
         <div
             class="hidden md:flex items-center gap-12 bg-white/5 px-8 py-2 rounded-full backdrop-blur-md border border-white/10">
-            <!-- 
-                 UPDATED: text-[10px] for that sharp, technical look. 
-                 Added tracking-[0.2em] for readability and aesthetic.
-            -->
             <a href="#projects"
                 class="font-mono text-[10px] hover:text-sage transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">Projects</a>
+            <a href="#capabilities"
+                class="font-mono text-[10px] hover:text-periwinkle transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">Capabilities</a>
             <a href="#about"
-                class="font-mono text-[10px] hover:text-periwinkle transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">About</a>
+                class="font-mono text-[10px] hover:text-white transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">Vision</a>
             <a href="#contact"
                 class="font-mono text-[10px] hover:text-white transition-colors uppercase tracking-[0.2em] text-zinc-400 hover:text-white">Contact</a>
         </div>
 
-        <!-- Right Controls -->
-
         <div class="flex items-center gap-4 z-50">
-            <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full border border-sage/30 bg-sage/10">
+            <a href="mailto:amalsonuoff@gmail.com"
+                class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full border border-sage/30 bg-sage/10 hover:bg-sage/20 transition-colors group">
                 <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
-                <a href="mailto:cresvero.tech@gmail.com"
-                    class="text-[10px] font-mono tracking-wide text-sage whitespace-nowrap" link>OPEN FOR WORK </a>
-            </div>
+                <span
+                    class="text-[10px] font-mono tracking-wide text-sage whitespace-nowrap group-hover:text-white transition-colors">OPEN
+                    FOR WORK</span>
+            </a>
 
             <button id="open-terminal-btn" class="p-2 hover:bg-white/10 rounded-full transition-colors hidden md:block"
-                title="Open Terminal (~)">
+                title="Open Terminal (~)" aria-label="Open Terminal">
                 <i data-lucide="terminal" class="w-4 h-4"></i>
             </button>
 
-            <button id="theme-toggle" class="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <button id="theme-toggle" class="p-2 hover:bg-white/10 rounded-full transition-colors"
+                aria-label="Toggle Theme">
                 <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
                 <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
             </button>
 
-            <button id="menu-toggle" class="md:hidden p-2 text-white mix-blend-difference">
+            <button id="menu-toggle" class="md:hidden p-2 text-white mix-blend-difference" aria-label="Menu">
                 <i data-lucide="menu" class="w-6 h-6"></i>
             </button>
         </div>
     </nav>
 
     <!-- MOBILE MENU OVERLAY -->
-
     <div id="mobile-menu" class="fixed inset-0 bg-dark z-30 flex flex-col justify-between p-8 closed">
         <div
             class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-multiply pointer-events-none">
@@ -156,51 +188,40 @@
                 <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">01 //
                     NAVIGATE</span>
                 <a href="#projects"
-                    class="text-5xl font-serif italic text-light hover:text-sage transition-colors relative">
-                    Projects
-                    <span
-                        class="absolute -bottom-2 left-0 w-0 h-[1px] bg-sage transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                    class="text-4xl font-serif italic text-light hover:text-sage transition-colors relative">Projects</a>
             </div>
-            <div class="flex flex-col items-center group mobile-link" data-target="#about">
+            <div class="flex flex-col items-center group mobile-link" data-target="#capabilities">
                 <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">02 //
                     NAVIGATE</span>
-                <a href="#about"
-                    class="text-5xl font-serif italic text-light hover:text-sage transition-colors relative">
-                    About
-                    <span
-                        class="absolute -bottom-2 left-0 w-0 h-[1px] bg-sage transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                <a href="#capabilities"
+                    class="text-4xl font-serif italic text-light hover:text-sage transition-colors relative">Capabilities</a>
             </div>
-            <div class="flex flex-col items-center group mobile-link" data-target="#contact">
+            <div class="flex flex-col items-center group mobile-link" data-target="#about">
                 <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">03 //
                     NAVIGATE</span>
+                <a href="#about"
+                    class="text-4xl font-serif italic text-light hover:text-sage transition-colors relative">Vision</a>
+            </div>
+            <div class="flex flex-col items-center group mobile-link" data-target="#contact">
+                <span class="font-mono text-[10px] text-periwinkle opacity-50 mb-1 tracking-widest">04 //
+                    NAVIGATE</span>
                 <a href="#contact"
-                    class="text-5xl font-serif italic text-light hover:text-sage transition-colors relative">
-                    Contact
-                    <span
-                        class="absolute -bottom-2 left-0 w-0 h-[1px] bg-sage transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                    class="text-4xl font-serif italic text-light hover:text-sage transition-colors relative">Contact</a>
             </div>
         </div>
         <div class="flex flex-col items-center gap-8 z-10 mt-12">
-            <button id="mobile-terminal-btn"
-                class="w-full max-w-xs border border-zinc-700 bg-zinc-900/50 p-4 flex items-center justify-between text-sage font-mono text-sm hover:border-sage transition-colors group">
-                <span class="flex items-center gap-2">
-                    <i data-lucide="terminal" class="w-4 h-4"></i>
-                    SYSTEM TERMINAL
-                </span>
-                <span class="group-hover:translate-x-1 transition-transform">&gt;_</span>
-            </button>
+            <a href="mailto:amalsonuoff@gmail.com"
+                class="w-full max-w-xs border border-zinc-700 bg-zinc-900/50 p-4 flex items-center justify-center text-sage font-mono text-sm hover:border-sage transition-colors">
+                INITIATE CONTACT
+            </a>
             <div class="text-center font-mono text-[10px] text-zinc-600">
                 <p>CRESVERO SYSTEMS</p>
-                <p>MOBILE INTERFACE v2.1.0</p>
+                <p>MOBILE INTERFACE v2.2.0</p>
             </div>
         </div>
     </div>
 
     <!-- HERO SECTION -->
-
     <header class="relative min-h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden pt-20">
         <div
             class="absolute top-1/4 right-[-10%] w-[60vw] h-[60vw] bg-periwinkle rounded-full blur-[150px] opacity-10 animate-pulse-slow pointer-events-none">
@@ -212,8 +233,8 @@
         <div class="z-10 max-w-6xl w-full mx-auto">
             <div class="reveal-element flex items-center gap-4 mb-6" style="transition-delay: 0ms;">
                 <div class="h-[1px] w-12 bg-sage"></div>
-                <p class="font-mono text-sage tracking-widest text-xs uppercase">
-                    Est. 2025 — Future Systems
+                <p class="font-mono text-sage tracking-widest text-xs uppercase scramble-target">
+                    Est. 2024 — Future Systems
                 </p>
             </div>
 
@@ -238,21 +259,30 @@
                         <span class="font-mono uppercase text-xs tracking-widest font-bold">Explore Projects</span>
                         <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </a>
-                    <p class="text-[10px] font-mono text-center opacity-40">AVAILABLE FOR NEW CLIENTS</p>
+                    <p class="text-[10px] font-mono text-center opacity-40">ACCEPTING NEW CHALLENGES</p>
                 </div>
             </div>
         </div>
 
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
+        <div class="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
             <i data-lucide="chevron-down" class="w-6 h-6"></i>
         </div>
     </header>
 
-    <!-- PROJECTS SECTION -->
+    <!-- NEW: TECH STACK MARQUEE -->
+    <div class="bg-sage text-dark py-4 overflow-hidden border-y border-zinc-900 relative z-20">
+        <div
+            class="flex gap-12 whitespace-nowrap animate-marquee font-mono text-xs font-bold tracking-widest uppercase">
+            <span>React</span><span>Three.js</span><span>Next.js</span><span>Node.js</span><span>Tailwind</span><span>Python</span><span>WebGL</span><span>TypeScript</span><span>AWS</span><span>Docker</span><span>Figma</span>
+            <span>React</span><span>Three.js</span><span>Next.js</span><span>Node.js</span><span>Tailwind</span><span>Python</span><span>WebGL</span><span>TypeScript</span><span>AWS</span><span>Docker</span><span>Figma</span>
+            <span>React</span><span>Three.js</span><span>Next.js</span><span>Node.js</span><span>Tailwind</span><span>Python</span><span>WebGL</span><span>TypeScript</span><span>AWS</span><span>Docker</span><span>Figma</span>
+        </div>
+    </div>
 
+    <!-- PROJECTS SECTION -->
     <section id="projects" class="min-h-screen relative flex flex-col lg:flex-row border-t border-zinc-500/20">
         <div id="canvas-container"
-            class="w-full lg:w-1/2 h-[50vh] lg:h-auto bg-gradient-to-br from-periwinkle/5 to-transparent relative overflow-hidden group">
+            class="w-full lg:w-1/2 h-[40vh] lg:h-auto bg-gradient-to-br from-periwinkle/5 to-transparent relative overflow-hidden group border-b lg:border-b-0 lg:border-r border-zinc-800">
             <div
                 class="absolute top-6 left-6 z-10 font-mono text-[10px] text-periwinkle border border-periwinkle/30 px-2 py-1 pointer-events-none">
                 FIG 1.0 — THE CORE ENGINE<br />
@@ -262,58 +292,120 @@
 
         <div class="w-full lg:w-1/2 p-8 md:p-20 flex flex-col justify-center bg-zinc-50/5 backdrop-blur-sm">
             <div class="reveal-element">
-                <h2 class="text-4xl md:text-6xl font-serif mb-2">Our <span class="text-sage italic">Capabilities</span>
-                </h2>
-                <p class="font-mono text-xs text-zinc-500 mb-12">SELECT A SERVICE VECTOR</p>
+                <h2 class="text-4xl md:text-5xl font-serif mb-2 scramble-target">Selected <span
+                        class="text-sage italic">Works</span></h2>
+                <p class="font-mono text-xs text-zinc-500 mb-12">FEATURED DEPLOYMENTS</p>
             </div>
 
-            <!--PROJECT - 1 : IKARA - Indian Knowledge & Artistary Recognisation Algorithm  -->
-
-            <div class="space-y-4">
-                <a href="https://scanart-artrecognisation.lovable.app/"
-                    class="reveal-element group border border-zinc-500/20 p-8 hover:border-sage hover:bg-zinc-900/50 transition-all duration-300 cursor-pointer block"
+            <div class="space-y-6">
+                <a href="https://scanart-artrecognisation.lovable.app/" target="_blank"
+                    class="reveal-element hover-card group border border-zinc-500/20 p-8 hover:border-sage hover:bg-zinc-900/50 cursor-pointer block relative overflow-hidden"
                     style="transition-delay: 150ms;">
+                    <div class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-sage/20 to-transparent"></div>
 
                     <div class="flex items-start justify-between mb-4">
-                        <i data-lucide="globe"
+                        <i data-lucide="scan-line"
                             class="text-periwinkle group-hover:text-sage transition-colors w-6 h-6"></i>
                         <span
                             class="font-mono text-[10px] opacity-30 group-hover:opacity-100 transition-opacity">PROJ_01</span>
                     </div>
-                    <h3 class="text-xl font-serif mb-2">IKARA : Indian Knowledge & Artistary Recognisation Algorithm
-                    </h3>
-                    <p class="text-sm opacity-60 mb-4 leading-relaxed">A cutting-edge AI system designed to preserve and
-                        promote India's rich artistic heritage through intelligent classification of traditional art
-                        forms.</p>
-                    <div class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage">
-                        REACT // NEXT.JS // TAILWIND
+                    <h3 class="text-2xl font-serif mb-2 group-hover:text-sage transition-colors">IKARA</h3>
+                    <p class="font-mono text-xs mb-3 text-periwinkle">Indian Knowledge & Artistary Recognisation
+                        Algorithm</p>
+                    <p class="text-sm opacity-60 mb-6 leading-relaxed">
+                        A cutting-edge AI system designed to preserve and promote India's rich artistic heritage through
+                        intelligent classification of traditional art forms. Bridging ancient culture with modern
+                        machine learning.
+                    </p>
+                    <div class="flex gap-2 flex-wrap">
+                        <span
+                            class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage border border-sage/20">REACT</span>
+                        <span
+                            class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage border border-sage/20">NEXT.JS</span>
+                        <span
+                            class="inline-block px-2 py-1 bg-zinc-500/10 rounded text-[10px] font-mono text-sage border border-sage/20">TAILWIND</span>
+                    </div>
+
+                    <div
+                        class="mt-6 flex items-center text-[10px] font-mono text-zinc-500 group-hover:text-white transition-colors">
+                        <span>VIEW DEPLOYMENT</span>
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 ml-2"></i>
                     </div>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- ABOUT SECTION -->
+    <!-- CAPABILITIES SECTION -->
+    <section id="capabilities" class="py-24 px-6 md:px-20 border-t border-zinc-800 bg-dark relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="reveal-element mb-16">
+                <h2 class="text-4xl md:text-5xl font-serif mb-4 scramble-target">System <span
+                        class="text-periwinkle italic">Capabilities</span></h2>
+                <p class="font-mono text-sm opacity-60 max-w-2xl">
+                    While we are a new entity, our foundations are built on years of study and experimentation. We don't
+                    just follow trends; we dissect them to build something stronger.
+                </p>
+            </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Cap 1 -->
+                <div class="reveal-element hover-card border-l border-zinc-800 pl-6 hover:border-sage transition-colors duration-500"
+                    style="transition-delay: 100ms;">
+                    <i data-lucide="globe" class="text-sage mb-4 w-6 h-6"></i>
+                    <h3 class="text-xl font-serif mb-2">Web Architecture</h3>
+                    <p class="text-sm opacity-60 font-mono leading-relaxed">
+                        We build high-performance Single Page Applications (SPAs) that load instantly. No bloat, just
+                        code.
+                    </p>
+                </div>
+                <!-- Cap 2 -->
+                <div class="reveal-element hover-card border-l border-zinc-800 pl-6 hover:border-periwinkle transition-colors duration-500"
+                    style="transition-delay: 200ms;">
+                    <i data-lucide="cpu" class="text-periwinkle mb-4 w-6 h-6"></i>
+                    <h3 class="text-xl font-serif mb-2">AI Integration</h3>
+                    <p class="text-sm opacity-60 font-mono leading-relaxed">
+                        Seamlessly weaving Machine Learning models into user interfaces, as demonstrated with IKARA.
+                    </p>
+                </div>
+                <!-- Cap 3 -->
+                <div class="reveal-element hover-card border-l border-zinc-800 pl-6 hover:border-white transition-colors duration-500"
+                    style="transition-delay: 300ms;">
+                    <i data-lucide="fingerprint" class="text-white mb-4 w-6 h-6"></i>
+                    <h3 class="text-xl font-serif mb-2">Brand Identity</h3>
+                    <p class="text-sm opacity-60 font-mono leading-relaxed">
+                        Crafting digital personas that stand out. From logo conception to full UI/UX design systems.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISION SECTION -->
     <section id="about" class="py-32 px-6 md:px-20 bg-sage text-dark border-y border-zinc-900 relative overflow-hidden">
         <div
             class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-multiply">
         </div>
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
             <div class="reveal-element">
-                <h2 class="text-5xl md:text-7xl font-serif leading-none">
+                <h2 class="text-5xl md:text-7xl font-serif leading-none scramble-target">
                     Digital <br />
-                    <span class="text-white drop-shadow-lg italic">Craftsmanship</span>
+                    <span class="text-white drop-shadow-lg italic">Manifesto</span>
                 </h2>
             </div>
             <div class="flex flex-col justify-end">
                 <div class="reveal-element" style="transition-delay: 200ms;">
-                    <p class="font-mono text-lg font-bold mb-8">
+                    <div class="h-[1px] w-20 bg-dark mb-6"></div>
+                    <p class="font-mono text-lg font-bold mb-6">
                         We are a new entity with an old soul.
                     </p>
-                    <p class="font-serif text-2xl leading-relaxed opacity-80">
-                        "In a world of templates, we chose to hand-forge every pixel.
-                        We don't have a 10-year history. We have a 100-year vision."
+                    <p class="font-serif text-xl leading-relaxed opacity-80 mb-6">
+                        "In a world of templates, we chose to hand-forge every pixel. We don't have a 10-year history.
+                        We have a 100-year vision."
+                    </p>
+                    <p class="font-mono text-sm opacity-60">
+                        Cresvero was founded to prove that new technology doesn't have to feel alien. It can feel human,
+                        tactile, and timeless.
                     </p>
                 </div>
             </div>
@@ -321,50 +413,75 @@
     </section>
 
     <!-- CONTACT SECTION -->
-
-    <section id="contact" class="py-24 px-6 md:px-20 relative min-h-screen flex flex-col justify-center">
-        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <div class="flex flex-col justify-between">
-                <div>
-                    <div class="reveal-element">
-                        <div class="flex items-center gap-2 mb-6 text-periwinkle">
-                            <div class="w-2 h-2 bg-periwinkle animate-pulse rounded-full"></div>
-                            <span class="font-mono text-xs tracking-widest">SECURE CHANNEL OPEN</span>
-                        </div>
-                        <h2 class="text-5xl md:text-7xl font-serif mb-8">Establish <span class="italic text-sage">Connection</span></h2>
-                        <p class="font-mono text-sm opacity-60 max-w-md leading-relaxed mb-12">
-                            Ready to upgrade your reality? Our frequency is open.
-                            Whether for a full system overhaul or a single module integration.
-                        </p>
-                    </div>
-                </div>
-                <div class="reveal-element" style="transition-delay: 200ms;">
-                    <div class="space-y-6">
-                        <div class="flex flex-col">
-                            <span class="font-mono text-xs opacity-40 mb-1">DIRECT LINE</span>
-                            <a href="mailto:cresvero.tech@gmail.com"
-                                class="text-xl font-serif hover:text-sage transition-colors">cresvero.tech@gmail.com</a>
-                        </div>
-                        <div class="flex gap-4 mt-8">
-                            <a href="#"
-                                class="border border-zinc-500 px-4 py-2 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">Instagram</a>
-                            <a href="#"
-                                class="border border-zinc-500 px-4 py-2 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">Twitter</a>
-                            <a href="#"
-                                class="border border-zinc-500 px-4 py-2 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">LinkedIn</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section id="contact" class="py-32 px-6 md:px-20 relative min-h-screen flex flex-col justify-center bg-dark pb-24">
+        <!-- Background Grid -->
+        <div
+            class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none">
         </div>
-        <div class="absolute bottom-6 left-6 right-6 flex justify-between items-end border-t border-zinc-800 pt-6">
-            <span class="font-serif italic text-2xl text-periwinkle">Cresvero.</span>
-            <span class="font-mono text-[10px] opacity-30 text-white">SYSTEM v2.1.0 // ALL RIGHTS RESERVED 2024</span>
+
+        <div class="max-w-5xl mx-auto w-full relative z-10 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+
+                <div class="reveal-element">
+                    <div class="flex items-center justify-center md:justify-start gap-2 mb-6 text-periwinkle">
+                        <div class="w-2 h-2 bg-periwinkle animate-pulse rounded-full"></div>
+                        <span class="font-mono text-xs tracking-widest">SECURE CHANNEL OPEN</span>
+                    </div>
+                    <h2 class="text-5xl md:text-8xl font-serif mb-8 text-white scramble-target">
+                        Let's <br />
+                        <span class="italic text-sage">Build</span>
+                    </h2>
+                    <p class="font-mono text-sm opacity-60 max-w-md leading-relaxed mb-12 mx-auto md:mx-0">
+                        Ready to upgrade your reality? Whether for a full system overhaul or a single module
+                        integration. We are ready to deploy.
+                    </p>
+
+                    <div class="flex gap-4 justify-center md:justify-start">
+                        <button onclick="copyEmail()"
+                            class="border border-zinc-500 px-6 py-3 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">
+                            COPY EMAIL
+                        </button>
+                        <a href="#"
+                            class="border border-zinc-500 px-6 py-3 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">
+                            LINKEDIN
+                        </a>
+                        <a href="#"
+                            class="border border-zinc-500 px-6 py-3 rounded-full font-mono text-xs hover:bg-sage hover:border-sage hover:text-black transition-all">
+                            GITHUB
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Direct Link Box with COPY FUNCTION -->
+                <div class="reveal-element" style="transition-delay: 200ms;">
+                    <div onclick="copyEmail()"
+                        class="bg-zinc-900/50 border border-zinc-800 p-8 md:p-12 relative overflow-hidden group hover:border-sage/50 transition-colors duration-500 hover-card cursor-pointer">
+                        <div class="absolute top-4 right-4 text-zinc-700 group-hover:text-sage transition-colors">
+                            <i data-lucide="copy" class="w-6 h-6"></i>
+                        </div>
+
+                        <p class="font-mono text-xs text-zinc-500 mb-2">DIRECT TRANSMISSION LINE</p>
+
+                        <h3
+                            class="text-xl md:text-3xl font-mono text-white break-all hover:text-sage transition-colors decoration-zinc-700">
+                            amalsonuoff@gmail.com
+                        </h3>
+
+                        <div class="mt-8 flex items-center gap-4 text-xs font-mono text-zinc-500">
+                            <span class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                CLICK TO COPY
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
 
-    <!-- LOGIC -->
+    <!-- SCRIPT -->
     <script src="script.js"></script>
 </body>
-
 </html>
+
